@@ -77,14 +77,14 @@ class ArucoDetector():
                     # skip
                     continue
                 else:
+                    # add aruco ID to list already published
                     self.found_arucos.append(fid)
-                    print("bottom_left: ")
-                    print(bottom_left)
-                    print("top_right: ")
-                    print(top_right)
+                    # find the center of the aruco using bounding boxes
                     (boxX,boxY) = self.find_aruco_centre(bottom_left,bottom_right,top_left,top_right)
-                    #self.publish_detection_msg(self.current_location.position.x, self.current_location.position.y, 3.0, fid)
-                    self.publish_detection_msg(boxX, boxY, 3.0, fid)
+                    # perform world transform to find location of aruco
+                    (targX, targY) = self.world_transform(boxX, boxY)
+                    # publish message to ROS network
+                    self.publish_detection_msg(targX, targY, 3.0, fid)
         return frame
 
     def publish_to_ros(self, frame):
